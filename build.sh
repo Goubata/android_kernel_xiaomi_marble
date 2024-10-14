@@ -5,6 +5,7 @@ export PLATFORM_VERSION=12
 export ANDROID_MAJOR_VERSION=s
 ln -s /usr/bin/python2.7 $HOME/python
 export PATH=$HOME/:$PATH
+LTO=thin 
 BUILD_CONFIG=$(pwd)/build.config.gki.aarch64
 
 ARGS='
