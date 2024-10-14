@@ -1,8 +1,6 @@
 #!/bin/bash
 clear
 export ARCH=arm64
-export PLATFORM_VERSION=12
-export ANDROID_MAJOR_VERSION=s
 ln -s /usr/bin/python2.7 $HOME/python
 export PATH=$HOME/:$PATH
 LTO=thin 
