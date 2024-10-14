@@ -5,7 +5,7 @@ export PLATFORM_VERSION=12
 export ANDROID_MAJOR_VERSION=s
 ln -s /usr/bin/python2.7 $HOME/python
 export PATH=$HOME/:$PATH
-BUILD_CONFIG=common/build.config.gki.aarch64
+BUILD_CONFIG=$(pwd)/build.config.gki.aarch64
 
 ARGS='
 CC=$HOME/Toolchains/clang/bin/clang
