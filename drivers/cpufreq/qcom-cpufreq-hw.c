@@ -20,7 +20,7 @@
 #include <linux/slab.h>
 #include <linux/qcom-cpufreq-hw.h>
 #include <linux/topology.h>
-#ifdef CONFIG_MACH_XIAOMI_MARBLE
+#ifdef CONFIG_BPF_SYSCALL=y
 #include <linux/moduleparam.h>
 #endif
 
@@ -41,7 +41,7 @@
 #define CYCLE_CNTR_OFFSET(core_id, m, acc_count)		\
 			(acc_count ? ((core_id + 1) * 4) : 0)
 
-#ifdef CONFIG_MACH_XIAOMI_MARBLE
+#ifdef CONFIG_BPF_SYSCALL=y
 static bool ukee_overclock = true;
 module_param(ukee_overclock, bool, S_IRUGO);
 #endif
