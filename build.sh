@@ -14,4 +14,4 @@ ARCH=arm64
 '
 make -C $(pwd) O=$(pwd)/out1 ${ARGS} clean && make -C $(pwd) O=$(pwd)/out1 ${ARGS} mrproper #to clean the source
 make -C $(pwd) O=$(pwd)/out1 ${ARGS} marble_defconfig #making your current kernel config
-make -C $(pwd) O=$(pwd)/out1 ${ARGS} -j$(nproc) #to compile the kernel
+make -C $(pwd) O=$(pwd)/out1 LTO=thin BUILD_CONFIG=$(pwd)/build.config.gki.aarch64 ${ARGS} -j$(nproc) #to compile the kernel
