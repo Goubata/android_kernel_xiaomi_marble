@@ -253,4 +253,4 @@ jobs:
         with:
           name: kernel-build-Main
           path: |
-            kernel/arch/arm64/boot/Image.gz
+            out/arch/arm64/boot/Image.gz
