@@ -12,9 +12,6 @@ void adreno_boost(struct adreno_device *adreno_dev) {
 
     // GPUクロックを最大に設定
     msm_gpu_set_freq(adreno_dev->gpu, adreno_dev->gpu->fast_rate);
-    
-    // 電圧調整（必要に応じて）
-    msm_gpu_set_voltage(adreno_dev->gpu, adreno_dev->gpu->fast_voltage);
 }
 EXPORT_SYMBOL_GPL(adreno_boost);
 
