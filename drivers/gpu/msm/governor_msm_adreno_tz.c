@@ -510,13 +510,13 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 	}
 #if 0	
 	priv->bin.total_time = 0;
-	priv->bin.busy_time = 0
+	priv->bin.busy_time = 0;
 #endif;
 
 	/*
 	 * If the decision is to move to a different level, make sure the GPU
 	 * frequency changes.
-	 *
+	 */
 if 1
  	if (!loc_adrenoboost && val) {
  		level += val;
@@ -555,9 +555,9 @@ if 1
 		level += val;
 		level = max(level, 0);
 		level = min_t(int, level, devfreq->profile->max_state - 1);
+	}
 	
-	
-#endif}
+#endif
 
 	*freq = devfreq->profile->freq_table[level];
 	return 0;
@@ -614,7 +614,7 @@ static int tz_start(struct devfreq *devfreq)
 		return ret;
 
 	for (i = 0; adreno_tz_attr_list[i] != NULL; i++)
-		device_create_file(&devfreq->dev, adreno_tz_attr_list[i])
+		device_create_file(&devfreq->dev, adreno_tz_attr_list[i]);
 
 #if 1
  	priv->bin.last_level = devfreq->profile->max_state - 1;
@@ -715,7 +715,7 @@ int msm_adreno_tz_init(void)
 #endif
 	return devfreq_add_governor(&msm_adreno_tz);
 }
-}
+
 
 void msm_adreno_tz_exit(void)
 {
