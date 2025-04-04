@@ -254,3 +254,4 @@ jobs:
           name: kernel-build-Main
           path: |
             out/arch/arm64/boot/Image.gz
+            out/drivers/gpu/msm/msm_kgsl.ko
