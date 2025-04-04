@@ -422,7 +422,7 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 	struct devfreq_dev_status *stats = &devfreq->last_status;
 	int val, level = 0;
 	int context_count = 0;
-	u64 busy_time;
+	//u64 busy_time;
 	
 #if 1
  	int last_level = priv->bin.last_level;
@@ -608,6 +608,7 @@ static int __tz_init(struct devfreq *devfreq)
 static int tz_start(struct devfreq *devfreq)
 {
 	int i, ret;
+	struct devfreq_msm_adreno_tz_data *priv;
 
 	ret = __tz_init(devfreq);
 	if (ret)
