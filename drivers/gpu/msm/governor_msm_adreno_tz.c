@@ -86,18 +86,18 @@ u64 suspend_time_ms(void)
 }
 
 #if 1
-static ssize_t adrenoboost_show(struct device *dev,
+ static ssize_t adrenoboost_show(struct device *dev,
  		struct device_attribute *attr, char *buf)
-{
+ {
  	size_t count = 0;
  	count += sprintf(buf, "%d\n", adrenoboost);
  
  	return count;
-}
+ }
  
-static ssize_t adrenoboost_save(struct device *dev,
+ static ssize_t adrenoboost_save(struct device *dev,
  		struct device_attribute *attr, const char *buf, size_t count)
-{
+ {
  	int input;
  	sscanf(buf, "%d ", &input);
  	if (input < 0 || input > 3) {
@@ -107,21 +107,9 @@ static ssize_t adrenoboost_save(struct device *dev,
  	}
  
  	return count;
-}
+ }
 #endif
  
- static ssize_t gpu_load_show(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
- @@ -134,6 +168,11 @@ static ssize_t suspend_time_show(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "%llu\n", time_diff);
- }
- 
- #if 1
- static DEVICE_ATTR(adrenoboost, 0644,
- 		adrenoboost_show, adrenoboost_save);
- #endif
-
 static ssize_t gpu_load_show(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
@@ -520,15 +508,15 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 		val = __secure_tz_update_entry3(level, priv->bin.total_time,
 			priv->bin.busy_time, context_count, priv);
 	}
-#if 0
+#if 0	
 	priv->bin.total_time = 0;
-	priv->bin.busy_time = 0;
-#endif
+	priv->bin.busy_time = 0
+#endif;
 
 	/*
 	 * If the decision is to move to a different level, make sure the GPU
 	 * frequency changes.
-	 */
+	 *
 if 1
  	if (!loc_adrenoboost && val) {
  		level += val;
@@ -562,14 +550,14 @@ if 1
  	priv->bin.total_time = 0;
  	priv->bin.busy_time = 0;
  #else
- 
+ /
 	if (val) {
 		level += val;
 		level = max(level, 0);
 		level = min_t(int, level, devfreq->profile->max_state - 1);
-	}
 	
-#endif
+	
+#endif}
 
 	*freq = devfreq->profile->freq_table[level];
 	return 0;
@@ -626,11 +614,11 @@ static int tz_start(struct devfreq *devfreq)
 		return ret;
 
 	for (i = 0; adreno_tz_attr_list[i] != NULL; i++)
-		device_create_file(&devfreq->dev, adreno_tz_attr_list[i]);
+		device_create_file(&devfreq->dev, adreno_tz_attr_list[i])
 
 #if 1
  	priv->bin.last_level = devfreq->profile->max_state - 1;
-#endif
+#endif;
 
 	return 0;
 }
@@ -720,7 +708,6 @@ int msm_adreno_tz_reinit(struct devfreq *devfreq)
 {
 	return __tz_init(devfreq);
 }
-
 int msm_adreno_tz_init(void)
 {
 #ifdef CONFIG_UCI
@@ -728,7 +715,7 @@ int msm_adreno_tz_init(void)
 #endif
 	return devfreq_add_governor(&msm_adreno_tz);
 }
-
+}
 
 void msm_adreno_tz_exit(void)
 {
