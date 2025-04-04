@@ -525,9 +525,16 @@ static int tz_suspend(struct devfreq *devfreq)
 {
 	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
 	unsigned int scm_data[2] = {0, 0};
+	int level;
 
 	if (!priv)
 		return 0;
+
+	level = devfreq_get_freq_level(devfreq, devfreq->last_status.current_frequency);
+	(level < 0) {
+        pr_err(TAG "tz_suspend: bad freq %ld\n", devfreq->last_status.current_frequency);
+        level = 0;
+    }
 
 	__secure_tz_reset_entry2(scm_data, sizeof(scm_data), priv->is_64);
 
