@@ -447,15 +447,15 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
  //	if ((unsigned int)(priv->bin.busy_time + stats.busy_time) >= MIN_BUSY && adrenoboost) {
  	if (loc_adrenoboost) {
  		if (loc_adrenoboost == 1) {
- 			priv->bin.busy_time += (unsigned int)((stats.busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_1[ last_level ]) / lvl_divider_map_1[ last_level ]);
+ 			priv->bin.busy_time += (unsigned int)((stats->busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_1[ last_level ]) / lvl_divider_map_1[ last_level ]);
  		} else
  		if (loc_adrenoboost == 2) {
- 			priv->bin.busy_time += (unsigned int)((stats.busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_2[ last_level ]  * 7 ) / (lvl_divider_map_2[ last_level ] * 10));
+ 			priv->bin.busy_time += (unsigned int)((stats->busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_2[ last_level ]  * 7 ) / (lvl_divider_map_2[ last_level ] * 10));
  		} else {
- 			priv->bin.busy_time += (unsigned int)((stats.busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_3[ last_level ]  * 8 ) / (lvl_divider_map_3[ last_level ] * 10));
+ 			priv->bin.busy_time += (unsigned int)((stats->busy_time * ( 1 + loc_adrenoboost ) * lvl_multiplicator_map_3[ last_level ]  * 8 ) / (lvl_divider_map_3[ last_level ] * 10));
  		}
  	} else {
- 		priv->bin.busy_time += stats.busy_time;
+ 		priv->bin.busy_time += stats->busy_time;
  	}
  #else
 
@@ -511,13 +511,13 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 #if 0	
 	priv->bin.total_time = 0;
 	priv->bin.busy_time = 0;
-#endif;
+#endif
 
 	/*
 	 * If the decision is to move to a different level, make sure the GPU
 	 * frequency changes.
 	 */
-if 1
+#if 1
  	if (!loc_adrenoboost && val) {
  		level += val;
  		level = max(level, 0);
@@ -550,7 +550,7 @@ if 1
  	priv->bin.total_time = 0;
  	priv->bin.busy_time = 0;
  #else
- /
+
 	if (val) {
 		level += val;
 		level = max(level, 0);
@@ -618,7 +618,7 @@ static int tz_start(struct devfreq *devfreq)
 
 #if 1
  	priv->bin.last_level = devfreq->profile->max_state - 1;
-#endif;
+#endif
 
 	return 0;
 }
