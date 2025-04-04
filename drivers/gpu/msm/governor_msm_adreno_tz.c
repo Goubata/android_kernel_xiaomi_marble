@@ -613,6 +613,8 @@ static int tz_start(struct devfreq *devfreq)
 	ret = __tz_init(devfreq);
 	if (ret)
 		return ret;
+		
+		priv = (struct devfreq_msm_adreno_tz_data *)devfreq->data;
 
 	for (i = 0; adreno_tz_attr_list[i] != NULL; i++)
 		device_create_file(&devfreq->dev, adreno_tz_attr_list[i]);
