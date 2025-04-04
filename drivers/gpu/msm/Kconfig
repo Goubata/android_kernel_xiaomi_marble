@@ -124,11 +124,3 @@ config QCOM_KGSL_HIBERNATION
 	  If enabled, kgsl will register necessary power manager callbacks to
 	  support hibernation. Also, driver will handle secure memory during
 	  hibernation entry and exit.
-
-config ADRENO_BOOST
-    bool "Enable Adreno Boost"
-    default y
-    help
-      Enables Adreno Boost, which optimizes GPU performance by adjusting 
-      dynamic voltage and frequency scaling (DVFS).
-
