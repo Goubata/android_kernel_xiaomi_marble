@@ -4,8 +4,8 @@
  * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 #include <linux/errno.h>
-#include <linux/devfreq.h>
 #include <linux/module.h>
+#include <linux/devfreq.h>
 #include <linux/dma-mapping.h>
 #include <linux/math64.h>
 #include <linux/of_platform.h>
@@ -76,15 +76,6 @@ u64 suspend_time_ms(void)
 	/* Update the suspend_start sample again */
 	suspend_start = suspend_sampling_time;
 	return time_diff;
-}
-
-static ssize_t adrenoboost_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
-{
-	size_t count = 0;
-	count += sprintf(buf, "%d\n", adrenoboost);
-
-	return count;
 }
 
 static ssize_t adrenoboost_save(struct device *dev,
