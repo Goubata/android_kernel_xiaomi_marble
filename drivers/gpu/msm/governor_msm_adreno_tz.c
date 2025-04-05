@@ -165,24 +165,6 @@ static ssize_t mod_percent_show(struct device *dev,
 	return scnprintf(buf, PAGE_SIZE, "%u\n", priv->mod_percent);
 }
 
-static ssize_t adrenoboost_store(struct device *dev,
-			struct device_attribute *attr,
-			const char *buf, size_t count)
-{
-	int ret;
-	u32 val;
-	struct devfreq *devfreq = to_devfreq(dev);
-	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
-
-	ret = kstrtou32(buf, 0, &val);
-	if (ret)
-		return ret;
-
-	priv->adrenoboost = clamp_t(u32, val, 0, 1);
-
-	return count;
-}
-
 static ssize_t adrenoboost_show(struct device *dev,
 			struct device_attribute *attr, char *buf)
 {
