@@ -5,6 +5,7 @@
  */
 #include <linux/errno.h>
 #include <linux/devfreq.h>
+#include <linux/module.h>
 #include <linux/dma-mapping.h>
 #include <linux/math64.h>
 #include <linux/of_platform.h>
