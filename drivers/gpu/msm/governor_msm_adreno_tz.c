@@ -5,6 +5,7 @@
  */
 #include <linux/errno.h>
 #include <linux/devfreq.h>
+
 #include <linux/dma-mapping.h>
 #include <linux/math64.h>
 #include <linux/of_platform.h>
@@ -16,7 +17,9 @@
 #include <linux/qcom_scm.h>
 #include <asm/cacheflush.h>
 #include <linux/qtee_shmbridge.h>
-
+#include <linux/device.h>       // device_create_file(), struct device_attribute など
+#include <linux/sysfs.h>        // DEVICE_ATTR macros (DEVICE_ATTR_RO, DEVICE_ATTR_RWなど)
+#include <linux/module.h>       // モジュール定義とlicense, author等
 #include "../../devfreq/governor.h"
 #include "msm_adreno_devfreq.h"
 
