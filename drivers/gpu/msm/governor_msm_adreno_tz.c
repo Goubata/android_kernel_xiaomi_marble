@@ -195,7 +195,8 @@ static ssize_t adrenoboost_show(struct device *dev,
 static DEVICE_ATTR_RO(gpu_load);
 static DEVICE_ATTR_RO(suspend_time);
 static DEVICE_ATTR_RW(mod_percent);
-static DEVICE_ATTR_RW(adrenoboost);
+static DEVICE_ATTR(adrenoboost, 0644,
+	adrenoboost_show, adrenoboost_save);
 
 static const struct device_attribute *adreno_tz_attr_list[] = {
 	&dev_attr_gpu_load,
