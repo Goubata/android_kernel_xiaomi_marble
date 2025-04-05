@@ -78,6 +78,15 @@ u64 suspend_time_ms(void)
 	return time_diff;
 }
 
+static ssize_t adrenoboost_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+	count += sprintf(buf, "%d\n", adrenoboost);
+
+	return count;
+}
+
 static ssize_t adrenoboost_save(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -163,15 +172,6 @@ static ssize_t mod_percent_show(struct device *dev,
 	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
 
 	return scnprintf(buf, PAGE_SIZE, "%u\n", priv->mod_percent);
-}
-
-static ssize_t adrenoboost_show(struct device *dev,
-			struct device_attribute *attr, char *buf)
-{
-	struct devfreq *devfreq = to_devfreq(dev);
-	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
-
-	return scnprintf(buf, PAGE_SIZE, "%u\n", priv->adrenoboost);
 }
 
 static DEVICE_ATTR_RO(gpu_load);
