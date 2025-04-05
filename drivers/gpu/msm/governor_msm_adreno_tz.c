@@ -54,7 +54,6 @@ static DEFINE_SPINLOCK(suspend_lock);
 
 #define TAG "msm_adreno_tz: "
 
-static unsigned int adrenoboost = 10000;
 static u64 suspend_time;
 static u64 suspend_start;
 static unsigned long acc_total, acc_relative_busy;
@@ -76,29 +75,6 @@ u64 suspend_time_ms(void)
 	suspend_start = suspend_sampling_time;
 	return time_diff;
 }
-
-static ssize_t adrenoboost_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
- 	size_t count = 0;
- 	count += sprintf(buf, "%d\n", adrenoboost);
- 
- 	return count;
- }
- 
- static ssize_t adrenoboost_save(struct device *dev,
- 		struct device_attribute *attr, const char *buf, size_t count)
- {
- 	int input;
- 	sscanf(buf, "%d ", &input);
- 	if (input < 0 || input > 50000) {
- 		adrenoboost = 0;
- 	} else {
- 		adrenoboost = input;
- 	}
- 
- 	return count;
- }
 
 static ssize_t gpu_load_show(struct device *dev,
 		struct device_attribute *attr,
@@ -146,9 +122,6 @@ static ssize_t suspend_time_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%llu\n", time_diff);
 }
 
-static DEVICE_ATTR(adrenoboost, 0644,
- 		adrenoboost_show, adrenoboost_save);
-
 static ssize_t mod_percent_store(struct device *dev,
 			struct device_attribute *attr,
 			const char *buf, size_t count)
@@ -185,7 +158,6 @@ static const struct device_attribute *adreno_tz_attr_list[] = {
 		&dev_attr_gpu_load,
 		&dev_attr_suspend_time,
 		&dev_attr_mod_percent,
-		&dev_attr_adrenoboost,
 		NULL
 };
 
@@ -525,21 +497,14 @@ static int tz_suspend(struct devfreq *devfreq)
 {
 	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
 	unsigned int scm_data[2] = {0, 0};
-	int level;
 
 	if (!priv)
 		return 0;
 
-	level = devfreq_get_freq_level(devfreq, devfreq->last_status.current_frequency);
-     if (level < 0) {
-        pr_err(TAG "tz_suspend: bad freq %ld\n", devfreq->last_status.current_frequency);
-        level = 0;
-    }
-
 	__secure_tz_reset_entry2(scm_data, sizeof(scm_data), priv->is_64);
 
 	priv->bin.total_time = 0;
-	priv->bin.busy_time = priv->bin.busy_time + (level * adrenoboost);
+	priv->bin.busy_time = 0;
 	return 0;
 }
 
