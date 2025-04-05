@@ -53,6 +53,7 @@ struct devfreq_msm_adreno_tz_data {
 	} bus;
 	unsigned int device_id;
 	bool is_64;
+	bool boost_enabled;
 	bool disable_busy_time_burst;
 	bool ctxt_aware_enable;
 	/* Multiplier to change gpu busy status */
