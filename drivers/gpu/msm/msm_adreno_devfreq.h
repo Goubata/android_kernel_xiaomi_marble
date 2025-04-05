@@ -58,6 +58,7 @@ struct devfreq_msm_adreno_tz_data {
 	u32 mod_percent;
 	/* Increase IB vote on high ddr stall */
 	bool fast_bus_hint;
+	u32 adrenoboost;
 };
 
 struct msm_adreno_extended_profile {
