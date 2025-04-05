@@ -28,6 +28,7 @@ struct xstats {
 };
 
 struct devfreq_msm_adreno_tz_data {
+	struct devfreq *devfreq;
 	struct notifier_block nb;
 	struct {
 		s64 total_time;
@@ -54,7 +55,6 @@ struct devfreq_msm_adreno_tz_data {
 	unsigned int device_id;
 	bool is_64;
 	bool boost_enabled;
-	int boost_level;
 	bool disable_busy_time_burst;
 	bool ctxt_aware_enable;
 	/* Multiplier to change gpu busy status */
