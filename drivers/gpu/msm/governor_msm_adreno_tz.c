@@ -550,14 +550,21 @@ static int __tz_init(struct devfreq *devfreq)
 static int tz_start(struct devfreq *devfreq)
 {
 	int i, ret;
+	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+
+	// boost 初期値設定
+	priv->boost_enabled = false;
+	if (priv->devfreq && priv->devfreq->profile)
+		priv->boost_level = priv->devfreq->profile->max_state - 1;
 
 	ret = __tz_init(devfreq);
 	if (ret)
 		return ret;
 
-	for (i = 0; adreno_tz_attr_list[i] != NULL; i++)
+	for (i = 0; adreno_tz_attr_list[i] != NULL; i++) {
 		device_create_file(&devfreq->dev, adreno_tz_attr_list[i]);
-		device_create_file(&devfreq->dev, &dev_attr_adrenoboost_level);  // ← これ追加
+	}
+	device_create_file(&devfreq->dev, &dev_attr_adrenoboost_level);
 
 	return 0;
 }
@@ -592,6 +599,9 @@ static int tz_suspend(struct devfreq *devfreq)
 static int tz_handler(struct devfreq *devfreq, unsigned int event, void *data)
 {
 	int result;
+	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    priv->devfreq = devfreq;
+
 	struct device_node *node = devfreq->dev.parent->of_node;
 
 	if (!of_device_is_compatible(node, "qcom,kgsl-3d0"))
