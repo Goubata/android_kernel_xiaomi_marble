@@ -76,6 +76,32 @@ u64 suspend_time_ms(void)
 	return time_diff;
 }
 
+static ssize_t adrenoboost_store(struct device *dev,
+        struct device_attribute *attr,
+        const char *buf, size_t count)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    unsigned int val;
+
+    if (kstrtou32(buf, 10, &val))
+        return -EINVAL;
+
+    priv->boost_enabled = (val != 0);
+    pr_info("adrenoboost %s\n", priv->boost_enabled ? "enabled" : "disabled");
+    return count;
+}
+
+static ssize_t adrenoboost_show(struct device *dev,
+        struct device_attribute *attr, char *buf)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    return scnprintf(buf, PAGE_SIZE, "%d\n", priv->boost_enabled);
+}
+
+static DEVICE_ATTR_RW(adrenoboost);
+
 static ssize_t gpu_load_show(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
@@ -158,6 +184,7 @@ static const struct device_attribute *adreno_tz_attr_list[] = {
 		&dev_attr_gpu_load,
 		&dev_attr_suspend_time,
 		&dev_attr_mod_percent,
+		&dev_attr_adrenoboost,
 		NULL
 };
 
@@ -352,6 +379,14 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 
 	if (!priv)
 		return 0;
+		
+		    /* ブーストが有効なら最大周波数に固定 */
+    if (priv->boost_enabled) {
+        int max_level = devfreq->profile->max_state - 1;
+        *freq = devfreq->profile->freq_table[max_level];
+        pr_info("adrenoboost active: forcing freq to %lu\n", *freq);
+        return 0;
+    }
 
 	/* keeps stats.private_data == NULL   */
 	result = devfreq_update_stats(devfreq);
