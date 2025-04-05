@@ -76,6 +76,63 @@ u64 suspend_time_ms(void)
 	return time_diff;
 }
 
+static ssize_t adrenoboost_store(struct device *dev,
+        struct device_attribute *attr,
+        const char *buf, size_t count)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    unsigned int val;
+
+    if (kstrtou32(buf, 10, &val))
+        return -EINVAL;
+
+    priv->boost_enabled = (val != 0);
+    pr_info("adrenoboost %s\n", priv->boost_enabled ? "enabled" : "disabled");
+    return count;
+}
+
+static ssize_t adrenoboost_show(struct device *dev,
+        struct device_attribute *attr, char *buf)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    return scnprintf(buf, PAGE_SIZE, "%d\n", priv->boost_enabled);
+}
+
+static DEVICE_ATTR_RW(adrenoboost);
+
+// adrenoboost_level: ユーザーがboost時のレベルを選択可能にする
+static ssize_t adrenoboost_level_store(struct device *dev,
+        struct device_attribute *attr,
+        const char *buf, size_t count)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    int level;
+
+    if (kstrtoint(buf, 10, &level))
+        return -EINVAL;
+
+    if (level < 0 || level >= devfreq->profile->max_state)
+        return -EINVAL;
+
+    priv->boost_level = level;
+    pr_info("adrenoboost_level set to %d (%lu Hz)\n",
+            level, devfreq->profile->freq_table[level]);
+    return count;
+}
+
+static ssize_t adrenoboost_level_show(struct device *dev,
+        struct device_attribute *attr, char *buf)
+{
+    struct devfreq *devfreq = to_devfreq(dev);
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    return scnprintf(buf, PAGE_SIZE, "%d\n", priv->boost_level);
+}
+
+static DEVICE_ATTR_RW(adrenoboost_level);
+
 static ssize_t gpu_load_show(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
@@ -158,6 +215,7 @@ static const struct device_attribute *adreno_tz_attr_list[] = {
 		&dev_attr_gpu_load,
 		&dev_attr_suspend_time,
 		&dev_attr_mod_percent,
+		&dev_attr_adrenoboost,
 		NULL
 };
 
@@ -271,6 +329,13 @@ static int tz_init(struct device *dev, struct devfreq_msm_adreno_tz_data *priv,
 	int ret;
 	phys_addr_t paddr;
 
+	// Boostの初期値設定
+	priv->boost_enabled = false;
+
+	// devfreqが有効ならboost_levelも初期化
+	if (priv->devfreq && priv->devfreq->profile)
+		priv->boost_level = priv->devfreq->profile->max_state - 1;
+
 	if (qcom_scm_dcvs_core_available()) {
 		u8 *tz_buf;
 		struct qtee_shm shm;
@@ -306,7 +371,7 @@ static int tz_init(struct device *dev, struct devfreq_msm_adreno_tz_data *priv,
 	} else
 		ret = -EINVAL;
 
-	 /* Initialize context aware feature, if enabled. */
+	/* Initialize context aware feature, if enabled. */
 	if (!ret && priv->ctxt_aware_enable) {
 		if (priv->is_64 && qcom_scm_dcvs_ca_available()) {
 			ret = tz_init_ca(dev, priv);
@@ -329,6 +394,7 @@ static int tz_init(struct device *dev, struct devfreq_msm_adreno_tz_data *priv,
 	return ret;
 }
 
+
 static inline int devfreq_get_freq_level(struct devfreq *devfreq,
 	unsigned long freq)
 {
@@ -343,15 +409,26 @@ static inline int devfreq_get_freq_level(struct devfreq *devfreq,
 
 static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 {
-	int result = 0;
-	struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
-	struct devfreq_dev_status *stats = &devfreq->last_status;
-	int val, level = 0;
-	int context_count = 0;
-	u64 busy_time;
+    int result = 0;
+    struct devfreq_msm_adreno_tz_data *priv = devfreq->data;
+    struct devfreq_dev_status *stats = &devfreq->last_status;
+    int val, level = 0;
+    int context_count = 0;
+    u64 busy_time;
 
-	if (!priv)
-		return 0;
+    if (!priv)
+        return 0;
+
+    // adrenoboost有効時の処理追加: 選択されたレベルを使用
+    if (priv->boost_enabled) {
+        level = priv->boost_level;
+        if (level < 0 || level >= devfreq->profile->max_state)
+            level = devfreq->profile->max_state - 1; // 安全に最大値にフォールバック
+        *freq = devfreq->profile->freq_table[level];
+        pr_info("adrenoboost active: forcing freq to level %d (%lu Hz)\n",
+                level, *freq);
+        return 0;
+    }
 
 	/* keeps stats.private_data == NULL   */
 	result = devfreq_update_stats(devfreq);
@@ -477,6 +554,7 @@ static int tz_start(struct devfreq *devfreq)
 
 	for (i = 0; adreno_tz_attr_list[i] != NULL; i++)
 		device_create_file(&devfreq->dev, adreno_tz_attr_list[i]);
+		device_create_file(&devfreq->dev, &dev_attr_adrenoboost_level);  // ← これ追加
 
 	return 0;
 }
