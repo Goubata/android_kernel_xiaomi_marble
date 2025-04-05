@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-only
+ccflags-y += -std=c99
 ccflags-y += -I$(src)
 
 obj-$(CONFIG_QCOM_KGSL) += msm_kgsl.o
